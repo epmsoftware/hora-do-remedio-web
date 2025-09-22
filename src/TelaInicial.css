@@ -1,0 +1,50 @@
+.tela-inicial {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: url("/assets/fundo-form.webp") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.content {
+  position: relative;
+  text-align: center;
+  color: #fff;
+  padding: 20px;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  font-weight: 300;
+  margin-bottom: 30px;
+}
+
+.btn {
+  background-color: #1e90ff;
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background-color: #187bcd;
+}
