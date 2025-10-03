@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import "./cadastro.css";
 
 export default function CadastroMedicamento() {
-  const navigate = useNavigate();
   const { pacienteId, medicamentoId } = useParams();
+  const navigate = useNavigate();
 
   const [medicamentos, setMedicamentos] = useState([]);
   const [nome, setNome] = useState("");
@@ -14,23 +15,23 @@ export default function CadastroMedicamento() {
   const [horarios, setHorarios] = useState("");
   const [descricao, setDescricao] = useState("");
 
-  // Carregar medicamentos
+  // Carrega lista de medicamentos
   useEffect(() => {
     const dados = localStorage.getItem("medicamentos");
     const lista = dados ? JSON.parse(dados) : [];
     setMedicamentos(lista);
 
-    // Se for edição
+    // Se houver medicamentoId, preencher campos para edição
     if (medicamentoId) {
-      const m = lista.find((med) => med.id === medicamentoId);
-      if (m) {
-        setNome(m.nome);
-        setValidade(m.validade);
-        setQuantidade(m.quantidade);
-        setFrequencia(m.frequencia);
-        setDosagem(m.dosagem);
-        setHorarios(m.horarios);
-        setDescricao(m.descricao);
+      const med = lista.find((m) => m.id === medicamentoId);
+      if (med) {
+        setNome(med.nome);
+        setValidade(med.validade);
+        setQuantidade(med.quantidade);
+        setFrequencia(med.frequencia);
+        setDosagem(med.dosagem);
+        setHorarios(med.horarios);
+        setDescricao(med.descricao);
       }
     }
   }, [medicamentoId]);
@@ -43,6 +44,7 @@ export default function CadastroMedicamento() {
 
     const novoMedicamento = {
       id: medicamentoId || Date.now().toString(),
+      pacienteId,
       nome,
       validade,
       quantidade,
@@ -50,89 +52,89 @@ export default function CadastroMedicamento() {
       dosagem,
       horarios,
       descricao,
-      pacienteId,
       alertaAtivo: true,
     };
 
+    // Atualiza lista: remove antigo se estiver editando
     const listaAtualizada = medicamentos.filter((m) => m.id !== novoMedicamento.id);
     listaAtualizada.push(novoMedicamento);
-    localStorage.setItem("medicamentos", JSON.stringify(listaAtualizada));
 
+    localStorage.setItem("medicamentos", JSON.stringify(listaAtualizada));
     alert("Medicamento salvo com sucesso!");
     navigate(`/pacientes/${pacienteId}/medicamentos`);
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "500px", margin: "0 auto" }}>
-      <h2>{medicamentoId ? "Editar Medicamento" : "Novo Medicamento"}</h2>
-      <div style={{ marginBottom: "10px" }}>
-        <input
-          type="text"
-          placeholder="Nome *"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          style={{ width: "100%", padding: "8px" }}
-        />
-      </div>
-      <div style={{ marginBottom: "10px" }}>
-        <input
-          type="date"
-          value={validade}
-          onChange={(e) => setValidade(e.target.value)}
-          style={{ width: "100%", padding: "8px" }}
-        />
-      </div>
-      <div style={{ marginBottom: "10px" }}>
-        <input
-          type="number"
-          placeholder="Quantidade *"
-          value={quantidade}
-          onChange={(e) => setQuantidade(e.target.value)}
-          style={{ width: "100%", padding: "8px" }}
-        />
-      </div>
-      <div style={{ marginBottom: "10px" }}>
-        <input
-          type="number"
-          placeholder="Frequência (em horas) *"
-          value={frequencia}
-          onChange={(e) => setFrequencia(e.target.value)}
-          style={{ width: "100%", padding: "8px" }}
-        />
-      </div>
-      <div style={{ marginBottom: "10px" }}>
-        <input
-          type="text"
-          placeholder="Dosagem *"
-          value={dosagem}
-          onChange={(e) => setDosagem(e.target.value)}
-          style={{ width: "100%", padding: "8px" }}
-        />
-      </div>
-      <div style={{ marginBottom: "10px" }}>
-        <input
-          type="text"
-          placeholder="Horários (ex: 08:00, 14:00, 20:00)"
-          value={horarios}
-          onChange={(e) => setHorarios(e.target.value)}
-          style={{ width: "100%", padding: "8px" }}
-        />
-      </div>
-      <div style={{ marginBottom: "10px" }}>
-        <textarea
-          placeholder="Descrição"
-          value={descricao}
-          onChange={(e) => setDescricao(e.target.value)}
-          style={{ width: "100%", padding: "8px", height: "80px" }}
-        />
-      </div>
+    <div className="form-container">
+      <h2 className="form-title">
+        {medicamentoId ? "Editar Medicamento" : "Cadastro de Medicamento"}
+      </h2>
 
-      <button onClick={handleSalvar} style={{ padding: "10px 20px", marginRight: "10px" }}>
-        Salvar
-      </button>
-      <button onClick={() => navigate(`/pacientes/${pacienteId}/medicamentos`)} style={{ padding: "10px 20px" }}>
-        Voltar
-      </button>
+      <input
+        className="form-input"
+        type="text"
+        placeholder="Nome *"
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+      />
+
+      <input
+        className="form-input"
+        type="date"
+        value={validade}
+        onChange={(e) => setValidade(e.target.value)}
+      />
+
+      <input
+        className="form-input"
+        type="number"
+        placeholder="Quantidade *"
+        value={quantidade}
+        onChange={(e) => setQuantidade(e.target.value)}
+      />
+
+      <input
+        className="form-input"
+        type="number"
+        placeholder="Frequência (em horas) *"
+        value={frequencia}
+        onChange={(e) => setFrequencia(e.target.value)}
+      />
+
+      <input
+        className="form-input"
+        type="text"
+        placeholder="Dosagem *"
+        value={dosagem}
+        onChange={(e) => setDosagem(e.target.value)}
+      />
+
+      <input
+        className="form-input"
+        type="text"
+        placeholder="Horários (ex: 08:00, 14:00, 20:00)"
+        value={horarios}
+        onChange={(e) => setHorarios(e.target.value)}
+      />
+
+      <textarea
+        className="form-input form-textarea"
+        placeholder="Descrição"
+        value={descricao}
+        onChange={(e) => setDescricao(e.target.value)}
+      />
+
+      <div className="form-actions">
+        <button className="form-button save" onClick={handleSalvar}>
+          Salvar
+        </button>
+        <button
+          className="form-button cancel"
+          onClick={() => navigate(`/pacientes/${pacienteId}/medicamentos`)}
+        >
+          Voltar
+        </button>
+      </div>
     </div>
   );
 }

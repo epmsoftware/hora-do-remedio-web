@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./pacientes.css";
+import "./cadastro.css"; // CSS unificado
 
 export default function ListaPacientes() {
   const [pacientes, setPacientes] = useState([]);
@@ -23,41 +23,55 @@ export default function ListaPacientes() {
   };
 
   return (
-    <div className="container">
-      <h2>Lista de Pacientes</h2>
+    <div className="form-container">
+      <h2 className="form-title">Lista de Pacientes</h2>
 
       {pacientes.length === 0 ? (
         <p>Nenhum paciente cadastrado.</p>
       ) : (
-        <ul>
+        <ul style={{ listStyle: "none", padding: 0, width: "100%" }}>
           {pacientes.map((p) => (
-            <li key={p.id} className="card">
+            <li key={p.id} className="form-card">
               <div>
                 <strong>{p.nome}</strong>
-                <p>Idade: {p.idade} | Peso: {p.peso} kg | Altura: {p.altura} m</p>
+                <p>
+                  Idade: {p.idade} | Peso: {p.peso} kg | Altura: {p.altura} m
+                </p>
                 {p.email && <p>Email: {p.email}</p>}
                 {p.telefone && <p>Telefone: {p.telefone}</p>}
                 {p.descricao && <p>Obs: {p.descricao}</p>}
               </div>
-              <div>
-                <button onClick={() => navigate("/cadastro", { state: { paciente: p } })}>
+
+              <div className="form-actions">
+                <button
+                  className="form-button save"
+                  onClick={() => navigate("/cadastro", { state: { paciente: p } })}
+                >
                   Editar
                 </button>
-                <button onClick={() => excluirPaciente(p.id)}>Excluir</button>
+                <button className="form-button cancel" onClick={() => excluirPaciente(p.id)}>
+                  Excluir
+                </button>
+                <button
+                  className="form-button save"
+                  onClick={() => navigate(`/pacientes/${p.id}/medicamentos`)}
+                >
+                  Medicamentos
+                </button>
               </div>
-              <button
-                onClick={() => navigate(`/pacientes/${p.id}/medicamentos`)}
-                //style={{ ...btnStyle, backgroundColor: "#1e90ff" }}
-              >
-                Medicamentos
-              </button>
             </li>
           ))}
         </ul>
       )}
 
-      <button onClick={() => navigate("/cadastro")}>Novo Paciente</button>
-      <button onClick={() => navigate("/dashboard")}>Voltar ao Dashboard</button>
+      <div className="form-actions">
+        <button className="form-button save" onClick={() => navigate("/cadastro")}>
+          Novo Paciente
+        </button>
+        <button className="form-button cancel" onClick={() => navigate("/dashboard")}>
+          Voltar ao Dashboard
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import "./cadastro.css"; // importa o CSS unificado
 
 export default function ListaMedicamentos() {
   const navigate = useNavigate();
@@ -33,37 +34,62 @@ export default function ListaMedicamentos() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "700px", margin: "0 auto" }}>
-      <h2>Lista de Medicamentos</h2>
+    <div className="form-container">
+      <h2 className="form-title">Lista de Medicamentos</h2>
+
       {medicamentos.length === 0 && <p>Nenhum medicamento cadastrado.</p>}
 
       {medicamentos.map((m) => (
-        <div key={m.id} style={{ border: "1px solid #ccc", borderRadius: "10px", padding: "10px", marginBottom: "10px" }}>
+        <div key={m.id} className="form-card">
           <strong>{m.nome}</strong> {m.validade && `(Validade: ${m.validade})`}
           <p>Dosagem: {m.dosagem}</p>
           <p>Quantidade: {m.quantidade}</p>
           <p>Frequência: {m.frequencia}h</p>
           {m.horarios && <p>Horários: {m.horarios}</p>}
           {m.descricao && <p>Descrição: {m.descricao}</p>}
+
           <label>
             Alerta:
-            <input type="checkbox" checked={m.alertaAtivo} onChange={() => toggleAlerta(m.id)} />
+            <input
+              type="checkbox"
+              checked={m.alertaAtivo}
+              onChange={() => toggleAlerta(m.id)}
+            />
           </label>
-          <div style={{ marginTop: "10px" }}>
-            <button onClick={() => navigate(`/pacientes/${pacienteId}/medicamentos/cadastro/${m.id}`)} style={{ marginRight: "10px" }}>
+
+          <div className="form-actions">
+            <button
+              className="form-button save"
+              onClick={() =>
+                navigate(`/pacientes/${pacienteId}/medicamentos/cadastro/${m.id}`)
+              }
+            >
               Editar
             </button>
-            <button onClick={() => excluirMedicamento(m.id)} style={{ backgroundColor: "red", color: "white" }}>
+            <button
+              className="form-button cancel"
+              style={{ backgroundColor: "red" }}
+              onClick={() => excluirMedicamento(m.id)}
+            >
               Excluir
             </button>
           </div>
         </div>
       ))}
 
-      <button onClick={() => navigate(`/pacientes/${pacienteId}/medicamentos/cadastro`)} style={{ marginTop: "20px" }}>
+      <button
+        className="form-button save"
+        onClick={() =>
+          navigate(`/pacientes/${pacienteId}/medicamentos/cadastro`)
+        }
+      >
         Novo Medicamento
       </button>
-      <button onClick={() => navigate("/pacientes")} style={{ marginTop: "10px" }}>
+
+      <button
+        className="form-button cancel"
+        onClick={() => navigate("/pacientes")}
+      >
         Voltar Pacientes
       </button>
     </div>
