@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Dashboard.css"; // vamos criar o CSS separado
+import "./Dashboard.css";
 
 export default function Dashboard() {
   const [usuario, setUsuario] = useState(null);
@@ -10,8 +10,12 @@ export default function Dashboard() {
   // Carregar usuário do localStorage
   useEffect(() => {
     const dados = localStorage.getItem("usuarioLogado");
-    if (dados) setUsuario(JSON.parse(dados));
-    else navigate("/"); // redireciona se não logado
+    if (dados) {
+      const user = JSON.parse(dados);
+      setUsuario(user);
+    } else {
+      navigate("/"); // redireciona se não logado
+    }
   }, [navigate]);
 
   const handleLogout = () => {
@@ -19,11 +23,29 @@ export default function Dashboard() {
     navigate("/");
   };
 
+  // Fecha o menu clicando fora
+  useEffect(() => {
+    const fecharMenu = (e) => {
+      if (
+        menuAberto &&
+        !e.target.closest(".dashboard-menu") &&
+        !e.target.closest(".menu-toggle")
+      ) {
+        setMenuAberto(false);
+      }
+    };
+    document.addEventListener("click", fecharMenu);
+    return () => document.removeEventListener("click", fecharMenu);
+  }, [menuAberto]);
+
   return (
     <div className="dashboard-container">
       {/* Header */}
       <header className="dashboard-header">
-        <button className="menu-toggle" onClick={() => setMenuAberto(!menuAberto)}>
+        <button
+          className="menu-toggle"
+          onClick={() => setMenuAberto(!menuAberto)}
+        >
           ☰
         </button>
         <h1>Hora do Remédio</h1>
@@ -33,39 +55,54 @@ export default function Dashboard() {
       <nav className={`dashboard-menu ${menuAberto ? "open" : ""}`}>
         <ul>
           <li>
-            <button onClick={() => {
+            <button
+              onClick={() => {
                 setMenuAberto(false);
                 navigate("/dashboard");
-            }} >Dashboard
+              }}
+            >
+              Dashboard
             </button>
           </li>
           <li>
-            <button onClick={() => {
+            <button
+              onClick={() => {
                 setMenuAberto(false);
-                alert("Pacientes");
-            }} >Pacientes
+                navigate("/pacientes");
+              }}
+            >
+              Pacientes
             </button>
           </li>
           <li>
-            <button onClick={() => {
+            <button
+              onClick={() => {
                 setMenuAberto(false);
                 alert("Usuários");
-            }}>Usuários
+              }}
+            >
+              Usuários
             </button>
           </li>
           <li>
-            <button onClick={() => {
+            <button
+              onClick={() => {
                 setMenuAberto(false);
                 alert("Configurações");
-            }}>Configurações
+              }}
+            >
+              Configurações
             </button>
           </li>
           <li>
-            <button onClick={() => {
+            <button
+              onClick={() => {
                 setMenuAberto(false);
                 handleLogout();
-            }}    
-            className="logout-btn">Sair
+              }}
+              className="logout-btn"
+            >
+              Sair
             </button>
           </li>
         </ul>
@@ -75,10 +112,13 @@ export default function Dashboard() {
       <main className="dashboard-content">
         {usuario ? (
           <>
-            <h2>Bem-vindo,{" "} 
-            {usuario.displayName
-            ? usuario.displayName
-            : usuario.email.replace("@login.local", "")}!</h2>
+            <h2>
+              Bem-vindo,{" "}
+              {usuario.displayName
+                ? usuario.displayName
+                : usuario.email.replace("@login.local", "")}
+              !
+            </h2>
             <p>Aqui você verá apenas seus dados.</p>
           </>
         ) : (
