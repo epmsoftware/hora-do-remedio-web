@@ -17,10 +17,27 @@ export default function CadastroPaciente() {
   const [telefone, setTelefone] = useState(pacienteEdit?.telefone || "");
   const [descricao, setDescricao] = useState(pacienteEdit?.descricao || "");
 
+  const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const userId = usuario?.uid;
+
+  const chavePacientes = `pacientes_${userId}`;
+
   useEffect(() => {
-    const dados = localStorage.getItem("pacientes");
-    if (dados) setPacientes(JSON.parse(dados));
-  }, []);
+    if (!userId) {
+      alert("Usuário não autenticado.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const dados = localStorage.getItem(chavePacientes);
+      if (dados) setPacientes(JSON.parse(dados));
+      else setPacientes([]);
+    } catch (e) {
+      console.error("Erro ao ler pacientes:", e);
+      setPacientes([]);
+    }
+  }, [userId, chavePacientes]);
 
   const handleSalvar = () => {
     if (!nome || !idade || !peso || !altura) {
@@ -39,10 +56,10 @@ export default function CadastroPaciente() {
       descricao,
     };
 
-    const listaAtualizada = pacientes.filter((p) => p.id !== novoPaciente.id);
+    const listaAtualizada = pacientes.filter((p) => p.id.toString() !== novoPaciente.id.toString());
     listaAtualizada.push(novoPaciente);
 
-    localStorage.setItem("pacientes", JSON.stringify(listaAtualizada));
+    localStorage.setItem(chavePacientes, JSON.stringify(listaAtualizada));
     alert("Paciente salvo com sucesso!");
     navigate("/pacientes");
   };

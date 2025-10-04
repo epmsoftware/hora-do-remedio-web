@@ -7,11 +7,21 @@ export default function ListaMedicamentos() {
   const { pacienteId } = useParams();
   const [medicamentos, setMedicamentos] = useState([]);
 
+  const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const userId = usuario?.uid;
+
+  const chaveMedicamentos = `medicamentos_${userId}_${pacienteId}`;
+
   const carregarMedicamentos = () => {
-    const dados = localStorage.getItem("medicamentos");
+    if (!userId) {
+      alert("Usuário não autenticado.");
+      navigate("/login");
+      return;
+    }
+
+    const dados = localStorage.getItem(chaveMedicamentos);
     const lista = dados ? JSON.parse(dados) : [];
-    const listaFiltrada = lista.filter((m) => m.pacienteId === pacienteId);
-    setMedicamentos(listaFiltrada);
+    setMedicamentos(lista);
   };
 
   useEffect(() => {
@@ -21,7 +31,7 @@ export default function ListaMedicamentos() {
   const excluirMedicamento = (id) => {
     if (!window.confirm("Deseja realmente excluir este medicamento?")) return;
     const listaAtualizada = medicamentos.filter((m) => m.id !== id);
-    localStorage.setItem("medicamentos", JSON.stringify(listaAtualizada));
+    localStorage.setItem(chaveMedicamentos, JSON.stringify(listaAtualizada));
     setMedicamentos(listaAtualizada);
   };
 
@@ -29,7 +39,7 @@ export default function ListaMedicamentos() {
     const listaAtualizada = medicamentos.map((m) =>
       m.id === id ? { ...m, alertaAtivo: !m.alertaAtivo } : m
     );
-    localStorage.setItem("medicamentos", JSON.stringify(listaAtualizada));
+    localStorage.setItem(chaveMedicamentos, JSON.stringify(listaAtualizada));
     setMedicamentos(listaAtualizada);
   };
 
@@ -41,7 +51,7 @@ export default function ListaMedicamentos() {
 
       {medicamentos.map((m) => (
         <div key={m.id} className="form-card">
-          <strong>{m.nome}</strong> {m.validade && `(Validade: ${m.validade})`}
+          <strong>{m.nome}</strong> {m.validade && <p>Validade: {new Date(m.validade).toLocaleDateString("pt-BR")}</p>}
           <p>Dosagem: {m.dosagem}</p>
           <p>Quantidade: {m.quantidade}</p>
           <p>Frequência: {m.frequencia}h</p>

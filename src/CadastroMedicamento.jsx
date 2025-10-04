@@ -15,26 +15,49 @@ export default function CadastroMedicamento() {
   const [horarios, setHorarios] = useState("");
   const [descricao, setDescricao] = useState("");
 
-  // Carrega lista de medicamentos
-  useEffect(() => {
-    const dados = localStorage.getItem("medicamentos");
-    const lista = dados ? JSON.parse(dados) : [];
-    setMedicamentos(lista);
+  const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const userId = usuario?.uid;
 
-    // Se houver medicamentoId, preencher campos para edição
-    if (medicamentoId) {
-      const med = lista.find((m) => m.id === medicamentoId);
-      if (med) {
-        setNome(med.nome);
-        setValidade(med.validade);
-        setQuantidade(med.quantidade);
-        setFrequencia(med.frequencia);
-        setDosagem(med.dosagem);
-        setHorarios(med.horarios);
-        setDescricao(med.descricao);
-      }
+  const chaveMedicamentos = `medicamentos_${userId}_${pacienteId}`;
+
+  useEffect(() => {
+  if (!userId) {
+    alert("Usuário não autenticado.");
+    navigate("/login");
+    return;
+  }
+
+  if (!pacienteId) {
+    alert("Paciente não especificado.");
+    navigate("/pacientes");
+    return;
+  }
+
+  const dados = localStorage.getItem(chaveMedicamentos);
+  let lista = [];
+
+  try {
+    lista = dados ? JSON.parse(dados) : [];
+  } catch (error) {
+    console.error("Erro ao ler medicamentos do localStorage:", error);
+    lista = [];
+  }
+
+  setMedicamentos(lista);
+
+  if (medicamentoId) {
+    const med = lista.find((m) => m.id.toString() === medicamentoId.toString());
+    if (med) {
+      setNome(med.nome);
+      setValidade(med.validade);
+      setQuantidade(med.quantidade);
+      setFrequencia(med.frequencia);
+      setDosagem(med.dosagem);
+      setHorarios(med.horarios);
+      setDescricao(med.descricao);
     }
-  }, [medicamentoId]);
+  }
+}, [medicamentoId, userId, pacienteId, chaveMedicamentos]);
 
   const handleSalvar = () => {
     if (!nome || !quantidade || !frequencia || !dosagem) {
@@ -59,7 +82,7 @@ export default function CadastroMedicamento() {
     const listaAtualizada = medicamentos.filter((m) => m.id !== novoMedicamento.id);
     listaAtualizada.push(novoMedicamento);
 
-    localStorage.setItem("medicamentos", JSON.stringify(listaAtualizada));
+    localStorage.setItem(chaveMedicamentos, JSON.stringify(listaAtualizada));
     alert("Medicamento salvo com sucesso!");
     navigate(`/pacientes/${pacienteId}/medicamentos`);
   };

@@ -6,20 +6,35 @@ export default function ListaPacientes() {
   const [pacientes, setPacientes] = useState([]);
   const navigate = useNavigate();
 
-  const carregarPacientes = () => {
-    const dados = localStorage.getItem("pacientes");
-    setPacientes(dados ? JSON.parse(dados) : []);
-  };
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const userId = usuarioLogado?.uid;
 
   useEffect(() => {
-    carregarPacientes();
-  }, []);
+    if (!userId) {
+      alert("Usuário não autenticado.");
+      navigate("/login");
+      return;
+    }
+
+    const chave = `pacientes_${userId}`;
+    const dados = localStorage.getItem(chave);
+
+    try {
+      setPacientes(dados ? JSON.parse(dados) : []);
+    } catch (e) {
+      console.error("Erro ao carregar pacientes:", e);
+      setPacientes([]);
+    }
+  }, [userId, navigate]);
 
   const excluirPaciente = (id) => {
     if (!window.confirm("Deseja excluir este paciente?")) return;
-    const lista = pacientes.filter((p) => p.id !== id);
-    localStorage.setItem("pacientes", JSON.stringify(lista));
-    setPacientes(lista);
+
+    const chave = `pacientes_${userId}`;
+    const listaAtualizada = pacientes.filter((p) => p.id.toString() !== id.toString());
+
+    localStorage.setItem(chave, JSON.stringify(listaAtualizada));
+    setPacientes(listaAtualizada);
   };
 
   return (
@@ -49,9 +64,14 @@ export default function ListaPacientes() {
                 >
                   Editar
                 </button>
-                <button className="form-button cancel" onClick={() => excluirPaciente(p.id)}>
+
+                <button
+                  className="form-button cancel"
+                  onClick={() => excluirPaciente(p.id)}
+                >
                   Excluir
                 </button>
+
                 <button
                   className="form-button save"
                   onClick={() => navigate(`/pacientes/${p.id}/medicamentos`)}
