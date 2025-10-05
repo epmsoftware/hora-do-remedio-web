@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./cadastro.css"; // importa o CSS unificado
 
+// 🔔 Som de alerta (arquivo local ou URL)
+const ALERT_SOUND = "https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3";
+
 export default function ListaMedicamentos() {
   const navigate = useNavigate();
   const { pacienteId } = useParams();
@@ -11,6 +14,20 @@ export default function ListaMedicamentos() {
   const userId = usuario?.uid;
 
   const chaveMedicamentos = `medicamentos_${userId}_${pacienteId}`;
+
+  // 🔔 Função para tocar som
+  const tocarSom = () => {
+    const audio = new Audio(ALERT_SOUND);
+    audio.play().catch(() => { });
+  };
+
+  // 🔔 Função para notificação nativa
+  const enviarNotificacao = (titulo, mensagem) => {
+    if (Notification.permission === "granted") {
+      new Notification(titulo, { body: mensagem, icon: "/icon.png" });
+      tocarSom();
+    }
+  };
 
   const carregarMedicamentos = () => {
     if (!userId) {
@@ -24,9 +41,57 @@ export default function ListaMedicamentos() {
     setMedicamentos(lista);
   };
 
+  // 🔹 1) Carrega medicamentos ao abrir a tela
   useEffect(() => {
     carregarMedicamentos();
   }, []);
+
+  // 🔹 2) Solicita permissão de notificação apenas uma vez
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  // 🔹 3) Verifica alertas a cada 1 minuto
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      medicamentos.forEach((m) => {
+        if (!m.alertaAtivo) return;
+
+        // Verifica validade (3 dias antes)
+        if (m.validade) {
+          const hoje = new Date();
+          const validade = new Date(m.validade);
+          const diffDias = Math.ceil((validade - hoje) / (1000 * 60 * 60 * 24));
+          if (diffDias <= 3 && diffDias >= 0) {
+            enviarNotificacao(
+              `Validade próxima - ${m.nome}`,
+              `O medicamento ${m.nome} vence em ${diffDias} dia(s)!`
+            );
+          }
+        }
+
+        // Verifica horário (ex: "08:00, 14:00, 20:00")
+        if (m.horarios) {
+          const agora = new Date();
+          const horaAtual = `${String(agora.getHours()).padStart(2, "0")}:${String(
+            agora.getMinutes()
+          ).padStart(2, "0")}`;
+          const horarios = m.horarios.split(",").map((h) => h.trim());
+
+          if (horarios.includes(horaAtual)) {
+            enviarNotificacao(
+              `Hora do remédio - ${m.nome}`,
+              `Está na hora de tomar ${m.nome} (${m.dosagem}).`
+            );
+          }
+        }
+      });
+    }, 60000); // 1 minuto
+
+    return () => clearInterval(intervalo);
+  }, [medicamentos]);
 
   const excluirMedicamento = (id) => {
     if (!window.confirm("Deseja realmente excluir este medicamento?")) return;
@@ -43,6 +108,14 @@ export default function ListaMedicamentos() {
     setMedicamentos(listaAtualizada);
   };
 
+  // 🔧 Corrige diferença de 1 dia no fuso horário
+  const formatarDataLocal = (dataISO) => {
+    const data = new Date(dataISO);
+    // compensar diferença de fuso horário local
+    data.setMinutes(data.getMinutes() + data.getTimezoneOffset());
+    return data.toLocaleDateString("pt-BR");
+  };
+
   return (
     <div className="form-container">
       <h2 className="form-title">Lista de Medicamentos</h2>
@@ -51,20 +124,26 @@ export default function ListaMedicamentos() {
 
       {medicamentos.map((m) => (
         <div key={m.id} className="form-card">
-          <strong>{m.nome}</strong> {m.validade && <p>Validade: {new Date(m.validade).toLocaleDateString("pt-BR")}</p>}
+          <strong>{m.nome}</strong>{" "}
+          {m.validade && (
+            <p>Validade: {formatarDataLocal(m.validade)}</p>
+          )}
           <p>Dosagem: {m.dosagem}</p>
           <p>Quantidade: {m.quantidade}</p>
           <p>Frequência: {m.frequencia}h</p>
           {m.horarios && <p>Horários: {m.horarios}</p>}
           {m.descricao && <p>Descrição: {m.descricao}</p>}
 
-          <label>
-            Alerta:
-            <input
-              type="checkbox"
-              checked={m.alertaAtivo}
-              onChange={() => toggleAlerta(m.id)}
-            />
+          <label className="switch-label">
+            <span>Alerta:</span>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={m.alertaAtivo}
+                onChange={() => toggleAlerta(m.id)}
+              />
+              <span className="slider"></span>
+            </label>
           </label>
 
           <div className="form-actions">
@@ -89,9 +168,7 @@ export default function ListaMedicamentos() {
 
       <button
         className="form-button save"
-        onClick={() =>
-          navigate(`/pacientes/${pacienteId}/medicamentos/cadastro`)
-        }
+        onClick={() => navigate(`/pacientes/${pacienteId}/medicamentos/cadastro`)}
       >
         Novo Medicamento
       </button>

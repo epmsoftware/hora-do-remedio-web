@@ -67,6 +67,7 @@ export default function ListaPacientes() {
 
                 <button
                   className="form-button cancel"
+                  style={{ backgroundColor: "red" }}
                   onClick={() => excluirPaciente(p.id)}
                 >
                   Excluir
@@ -74,6 +75,7 @@ export default function ListaPacientes() {
 
                 <button
                   className="form-button save"
+                  style={{ backgroundColor: "green" }}
                   onClick={() => navigate(`/pacientes/${p.id}/medicamentos`)}
                 >
                   Medicamentos
