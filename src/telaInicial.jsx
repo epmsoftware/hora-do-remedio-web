@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./TelaInicial.css"; // CSS separado
+import "./TelaInicial.css";
 
 export default function TelaInicial() {
   const navigate = useNavigate();

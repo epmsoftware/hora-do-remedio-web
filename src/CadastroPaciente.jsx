@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./cadastro.css"; // CSS unificado
+import "./cadastro.css";
 
 export default function CadastroPaciente() {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export default function CadastroPaciente() {
       console.error("Erro ao ler pacientes:", e);
       setPacientes([]);
     }
-  }, [userId, chavePacientes]);
+  }, [userId, chavePacientes, navigate]);
 
   const handleSalvar = () => {
     if (!nome || !idade || !peso || !altura) {

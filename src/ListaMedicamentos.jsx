@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./cadastro.css"; // importa o CSS unificado
+import "./cadastro.css";
 
-// 🔔 Som de alerta (arquivo local ou URL)
+// Som de alerta (arquivo local ou URL)
 const ALERT_SOUND = "https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3";
 
 export default function ListaMedicamentos() {
@@ -15,21 +15,21 @@ export default function ListaMedicamentos() {
 
   const chaveMedicamentos = `medicamentos_${userId}_${pacienteId}`;
 
-  // 🔔 Função para tocar som
-  const tocarSom = () => {
+  // Função para tocar som
+  const tocarSom = useCallback(() => {
     const audio = new Audio(ALERT_SOUND);
     audio.play().catch(() => { });
-  };
+  }, []);
 
-  // 🔔 Função para notificação nativa
-  const enviarNotificacao = (titulo, mensagem) => {
+  // Função para notificação nativa
+  const enviarNotificacao = useCallback((titulo, mensagem) => {
     if (Notification.permission === "granted") {
-      new Notification(titulo, { body: mensagem, icon: "/icon.png" });
+      new Notification(titulo, { body: mensagem });
       tocarSom();
     }
-  };
+  }, [tocarSom]);
 
-  const carregarMedicamentos = () => {
+  const carregarMedicamentos = useCallback(() => {
     if (!userId) {
       alert("Usuário não autenticado.");
       navigate("/login");
@@ -39,21 +39,21 @@ export default function ListaMedicamentos() {
     const dados = localStorage.getItem(chaveMedicamentos);
     const lista = dados ? JSON.parse(dados) : [];
     setMedicamentos(lista);
-  };
+  }, [userId, chaveMedicamentos, navigate]);
 
-  // 🔹 1) Carrega medicamentos ao abrir a tela
+  // 1) Carrega medicamentos ao abrir a tela
   useEffect(() => {
     carregarMedicamentos();
-  }, []);
+  }, [carregarMedicamentos]);
 
-  // 🔹 2) Solicita permissão de notificação apenas uma vez
+  // 2) Solicita permissão de notificação apenas uma vez
   useEffect(() => {
     if ("Notification" in window && Notification.permission !== "granted") {
       Notification.requestPermission();
     }
   }, []);
 
-  // 🔹 3) Verifica alertas a cada 1 minuto
+  // 3) Verifica alertas a cada 1 minuto
   useEffect(() => {
     const intervalo = setInterval(() => {
       medicamentos.forEach((m) => {
@@ -91,7 +91,7 @@ export default function ListaMedicamentos() {
     }, 60000); // 1 minuto
 
     return () => clearInterval(intervalo);
-  }, [medicamentos]);
+  }, [medicamentos, enviarNotificacao]);
 
   const excluirMedicamento = (id) => {
     if (!window.confirm("Deseja realmente excluir este medicamento?")) return;
@@ -108,7 +108,7 @@ export default function ListaMedicamentos() {
     setMedicamentos(listaAtualizada);
   };
 
-  // 🔧 Corrige diferença de 1 dia no fuso horário
+  // Corrige diferença de 1 dia no fuso horário
   const formatarDataLocal = (dataISO) => {
     const data = new Date(dataISO);
     // compensar diferença de fuso horário local

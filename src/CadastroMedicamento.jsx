@@ -57,7 +57,7 @@ export default function CadastroMedicamento() {
       setDescricao(med.descricao);
     }
   }
-}, [medicamentoId, userId, pacienteId, chaveMedicamentos]);
+}, [medicamentoId, userId, pacienteId, chaveMedicamentos, navigate]);
 
   const handleSalvar = () => {
     if (!nome || !quantidade || !frequencia || !dosagem) {

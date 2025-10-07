@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./cadastro.css"; // CSS unificado
+import "./cadastro.css";
 
 export default function ListaPacientes() {
   const [pacientes, setPacientes] = useState([]);
