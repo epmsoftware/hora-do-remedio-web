@@ -6,7 +6,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBjhINAWBzU94RVdO7Zs_ohNnhbr4kW5i0",
   authDomain: "hora-do-remedio-web01.firebaseapp.com",
   projectId: "hora-do-remedio-web01",
-  storageBucket: "hora-do-remedio-web01.firebasestorage.app",
+  storageBucket: "hora-do-remedio-web01.appspot.com",
   messagingSenderId: "511727124624",
   appId: "1:511727124624:web:2caa0cd21eb009faf81815"
 };

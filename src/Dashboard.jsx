@@ -116,7 +116,9 @@ export default function Dashboard() {
               Bem-vindo,{" "}
               {usuario.displayName
                 ? usuario.displayName
-                : usuario.email.replace("@login.local", "")}
+                : usuario.email
+                ? usuario.email.replace("@login.local", "")
+                : "Usuário"}
               !
             </h2>
             <p>Aqui você verá apenas seus dados.</p>
