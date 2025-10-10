@@ -96,7 +96,7 @@ export default function ListaMedicamentos() {
               // Toca e repete o alerta a cada 1 minuto (ou altere para 3 min se quiser)
               let contador = 1;
               const repetidor = setInterval(() => {
-                if (contador >= 60 || !m.alertaAtivo) {
+                if (contador >= 20 || !m.alertaAtivo) {
                   // para após 60 repetições (~1 hora)
                   clearInterval(repetidor);
                   delete alarmesAtivos[chave];
@@ -109,7 +109,7 @@ export default function ListaMedicamentos() {
                 );
 
                 contador++;
-              }, 60 * 1000); // repete a cada 1 minuto
+              }, 3 * 60 * 1000); // repete a cada 3 minuto
 
               // marca alarme ativo
               alarmesAtivos[chave] = repetidor;
