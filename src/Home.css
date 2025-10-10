@@ -1,0 +1,110 @@
+/* Container geral */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Header */
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1e88e5;
+  color: white;
+  padding: 10px 20px;
+}
+
+.home-header h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Menu lateral */
+.home-menu {
+  position: fixed;
+  top: 0;
+  left: -250px; /* escondido inicialmente */
+  width: 250px;
+  height: 100%;
+  background: #1565c0;
+  color: white;
+  transition: left 0.3s ease;
+  padding-top: 60px; /* abaixo do header */
+  z-index: 1000;
+}
+
+.home-menu.open {
+  left: 0; /* mostra quando ativo */
+}
+
+.home-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.home-menu li {
+  margin: 10px 0;
+}
+
+.home-menu button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.home-menu button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.logout-btn {
+  background: #e53935;
+}
+
+.logout-btn:hover {
+  background: #c62828;
+}
+
+/* Conteúdo principal */
+.home-content {
+  flex: 1;
+  padding: 20px;
+  background: #f5f5f5;
+  margin-top: 0px; /* para não ficar atrás do header */
+  overflow-y: auto;
+}
+
+.home-content h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.home-content p {
+  color: #555;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .home-header h1 {
+    font-size: 1rem;
+  }
+  .home-menu {
+    width: 200px;
+  }
+}

@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./cadastro.css";
+import "./Unificado.css";
 
 // Som de alerta (arquivo local ou URL)
-const ALERT_SOUND = "https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3";
+const ALERT_SOUND = "/assets/notificacao.mp3";
 
 export default function ListaMedicamentos() {
   const navigate = useNavigate();
@@ -24,8 +24,10 @@ export default function ListaMedicamentos() {
   // Função para notificação nativa
   const enviarNotificacao = useCallback((titulo, mensagem) => {
     if (Notification.permission === "granted") {
-      new Notification(titulo, { body: mensagem });
-      tocarSom();
+      new Notification(titulo, { body: mensagem,
+        silent: true // Desativa o som nativo da notificação
+       });
+      tocarSom(); // Toca apenas o som local
     }
   }, [tocarSom]);
 

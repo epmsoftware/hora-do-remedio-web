@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./cadastro.css";
+import "./Unificado.css";
 
 export default function ListaPacientes() {
   const [pacientes, setPacientes] = useState([]);
@@ -90,8 +90,8 @@ export default function ListaPacientes() {
         <button className="form-button save" onClick={() => navigate("/cadastro")}>
           Novo Paciente
         </button>
-        <button className="form-button cancel" onClick={() => navigate("/dashboard")}>
-          Voltar ao Dashboard
+        <button className="form-button cancel" onClick={() => navigate("/home")}>
+          Voltar ao Home
         </button>
       </div>
     </div>

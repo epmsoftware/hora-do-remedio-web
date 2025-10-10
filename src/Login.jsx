@@ -39,7 +39,7 @@ export default function LoginCadastro() {
       setSenha("");
       showAlert("Sucesso", `Bem-vindo, ${usuario}!`);
 
-      navigate("/dashboard");
+      navigate("/home");
     } catch (err) {
       console.error("Erro no login:", err);
       showAlert("Erro", "Usuário ou senha inválidos!");
@@ -92,7 +92,7 @@ export default function LoginCadastro() {
       const user = result.user;
       localStorage.setItem("usuarioLogado", JSON.stringify(user));
       alert(`Bem-vindo, ${user.displayName}!`);
-      navigate("/dashboard");
+      navigate("/home");
     } catch (err) {
       console.error(err);
 
