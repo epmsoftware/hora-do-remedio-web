@@ -55,6 +55,8 @@ export default function ListaMedicamentos() {
 
   // 3) Verifica alertas a cada 1 minuto
   useEffect(() => {
+    const alarmesAtivos = {};
+    
     const intervalo = setInterval(() => {
       medicamentos.forEach((m) => {
         if (!m.alertaAtivo) return;
@@ -78,19 +80,49 @@ export default function ListaMedicamentos() {
           const horaAtual = `${String(agora.getHours()).padStart(2, "0")}:${String(
             agora.getMinutes()
           ).padStart(2, "0")}`;
+
           const horarios = m.horarios.split(",").map((h) => h.trim());
 
-          if (horarios.includes(horaAtual)) {
-            enviarNotificacao(
-              `Hora do remédio - ${m.nome}`,
-              `Está na hora de tomar ${m.nome} (${m.dosagem}).`
-            );
-          }
+          horarios.forEach((horario) => {
+            const chave = `${m.id}_${horario}`;
+
+            // Se chegou o horário e o alarme ainda não está ativo
+            if (horaAtual === horario && !alarmesAtivos[chave]) {
+              enviarNotificacao(
+                `Hora do remédio - ${m.nome}`,
+                `Está na hora de tomar ${m.nome} (${m.dosagem}).`
+              );
+
+              // Toca e repete o alerta a cada 1 minuto (ou altere para 3 min se quiser)
+              let contador = 1;
+              const repetidor = setInterval(() => {
+                if (contador >= 60 || !m.alertaAtivo) {
+                  // para após 60 repetições (~1 hora)
+                  clearInterval(repetidor);
+                  delete alarmesAtivos[chave];
+                  return;
+                }
+
+                enviarNotificacao(
+                  `Lembrete - ${m.nome}`,
+                  `Ainda está na hora de tomar ${m.nome} (${m.dosagem}).`
+                );
+
+                contador++;
+              }, 60 * 1000); // repete a cada 1 minuto
+
+              // marca alarme ativo
+              alarmesAtivos[chave] = repetidor;
+            }
+          });
         }
       });
-    }, 60000); // 1 minuto
+    }, 60 * 1000); // verifica a cada 1 minuto
 
-    return () => clearInterval(intervalo);
+    return () => {
+      clearInterval(intervalo);
+      Object.values(alarmesAtivos).forEach(clearInterval);
+    };
   }, [medicamentos, enviarNotificacao]);
 
   const excluirMedicamento = (id) => {
