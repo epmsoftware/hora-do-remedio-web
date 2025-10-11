@@ -91,7 +91,7 @@ export default function ListaPacientes() {
           Novo Paciente
         </button>
         <button className="form-button cancel" onClick={() => navigate("/home")}>
-          Voltar ao Home
+          Voltar Home
         </button>
       </div>
     </div>

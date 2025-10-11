@@ -33,11 +33,19 @@ export default function LoginCadastro() {
       const user = cred.user;
 
       // salva usuário logado localmente
-      localStorage.setItem("usuarioLogado", JSON.stringify({ uid: user.uid }));
+      const usuarioParaSalvar = {
+        uid: user.uid,
+        nome: usuario, // se for login normal, usa o nome digitado
+        email: user.email,
+        foto: "/assets/user.png",
+        tipo: "local"
+      };
+
+      localStorage.setItem("usuarioLogado", JSON.stringify(usuarioParaSalvar));
 
       setUsuario("");
       setSenha("");
-      showAlert("Sucesso", `Bem-vindo, ${usuario}!`);
+      showAlert("Sucesso", `Bem-vindo, ${usuarioParaSalvar.nome}!`);
 
       navigate("/home");
     } catch (err) {
@@ -90,9 +98,20 @@ export default function LoginCadastro() {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      localStorage.setItem("usuarioLogado", JSON.stringify(user));
-      alert(`Bem-vindo, ${user.displayName}!`);
-      navigate("/home");
+
+      // Padroniza o formato salvo no localStorage
+      const usuarioParaSalvar = {
+        uid: user.uid,
+        nome: user.displayName || "Usuário Google",
+        email: user.email,
+        foto: user.photoURL || "/assets/user.png",
+        tipo: "google"
+      };
+
+      localStorage.setItem("usuarioLogado", JSON.stringify(usuarioParaSalvar));
+
+      alert(`Bem-vindo, ${usuarioParaSalvar.nome}!`);
+      window.location.href = "/home";
     } catch (err) {
       console.error(err);
 

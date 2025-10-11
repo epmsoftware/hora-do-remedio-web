@@ -40,7 +40,7 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      {/* Header */}
+      {/* Header moderno */}
       <header className="home-header">
         <button
           className="menu-toggle"
@@ -48,7 +48,24 @@ export default function Home() {
         >
           ☰
         </button>
+
         <h1>Hora do Remédio</h1>
+
+        {usuario && (
+          <div className="perfil-area">
+            <img
+              src={usuario.foto || "/assets/user.png"}
+              alt="Foto do usuário"
+              className="foto-perfil"
+            />
+            <span className="nome-usuario">
+              {usuario.nome || "Usuário"}
+            </span>
+            <button onClick={handleLogout} className="logout-btn-top">
+              Sair
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Menu lateral */}
@@ -122,15 +139,7 @@ export default function Home() {
       <main className="home-content">
         {usuario ? (
           <>
-            <h2>
-              Bem-vindo,{" "}
-              {usuario.displayName
-                ? usuario.displayName
-                : usuario.email
-                ? usuario.email.replace("@login.local", "")
-                : "Usuário"}
-              !
-            </h2>
+            <h2>Bem-vindo, {usuario.nome || "Usuário"}!</h2>
             <p>Aqui você verá apenas seus dados.</p>
           </>
         ) : (
