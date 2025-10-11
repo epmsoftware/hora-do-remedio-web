@@ -23,6 +23,12 @@ export default function Home() {
     navigate("/");
   };
 
+  // Função auxiliar: fecha o menu e navega
+  const irPara = (rota) => {
+    setMenuAberto(false);
+    navigate(rota);
+  };
+
   // Fecha o menu clicando fora
   useEffect(() => {
     const fecharMenu = (e) => {
@@ -49,7 +55,10 @@ export default function Home() {
           ☰
         </button>
 
-        <h1>Hora do Remédio</h1>
+        <div className="home-header-text">
+          <h1>Hora do Remédio</h1>
+          <p>Gerenciamento de Pacientes</p>
+        </div>
 
         {usuario && (
           <div className="perfil-area">
@@ -61,9 +70,9 @@ export default function Home() {
             <span className="nome-usuario">
               {usuario.nome || "Usuário"}
             </span>
-            <button onClick={handleLogout} className="logout-btn-top">
+            {/*<button onClick={handleLogout} className="logout-btn-top">
               Sair
-            </button>
+            </button>*/}
           </div>
         )}
       </header>
@@ -71,67 +80,12 @@ export default function Home() {
       {/* Menu lateral */}
       <nav className={`home-menu ${menuAberto ? "open" : ""}`}>
         <ul>
-          <li>
-            <button
-              onClick={() => {
-                setMenuAberto(false);
-                navigate("/home");
-              }}
-            >
-              Home
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => {
-                setMenuAberto(false);
-                navigate("/pacientes");
-              }}
-            >
-              Pacientes
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => {
-                setMenuAberto(false);
-                navigate("/meioambiente");
-              }}
-            >
-              Meio Ambiente
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => {
-                setMenuAberto(false);
-                alert("Usuários");
-              }}
-            >
-              Usuários
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => {
-                setMenuAberto(false);
-                alert("Configurações");
-              }}
-            >
-              Configurações
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => {
-                setMenuAberto(false);
-                handleLogout();
-              }}
-              className="logout-btn"
-            >
-              Sair
-            </button>
-          </li>
+          <li><button onClick={() => irPara("/home")}>Home</button></li>
+          <li><button onClick={() => irPara("/pacientes")}>Pacientes</button></li>
+          <li><button onClick={() => irPara("/meioambiente")}>Meio Ambiente</button></li>
+          <li><button onClick={() => { setMenuAberto(false); alert("Usuários"); }}>Usuários</button></li>
+          <li><button onClick={() => { setMenuAberto(false); alert("Configurações"); }}>Configurações</button></li>
+          <li><button onClick={handleLogout} className="logout-btn">Sair</button></li>
         </ul>
       </nav>
 

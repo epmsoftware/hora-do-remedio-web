@@ -37,6 +37,8 @@ export default function MeioAmbiente() {
       <section className="section2">
         <img src="/assets/descarte.png" alt="Imagem de descarte" className="imagem-descarte" />
         <p>
+          <strong>Alerta:</strong> Não se esqueça de descartar seus medicamentos corretamente!
+          <br /><br />
           <strong>Não descarte no lixo comum, pia ou vaso sanitário:</strong> Esses métodos podem contaminar o
           solo e os recursos hídricos, além de representar risco à saúde pública.
           <br /><br />
@@ -51,7 +53,7 @@ export default function MeioAmbiente() {
           • <strong>Descarte Consciente:</strong> Plataforma que indica farmácias participantes do programa de
           coleta de medicamentos. Acesse em{" "}
           <a href="https://www.descarteconsciente.com.br" target="_blank" rel="noreferrer">
-            https://www.descarteconsciente.com.br
+            www.descarteconsciente.com.br
           </a>
         </p>
         <br />
@@ -59,6 +61,13 @@ export default function MeioAmbiente() {
           • <strong>LogMed:</strong> Plataforma que lista pontos de coleta em todo o Brasil. Acesse{" "}
           <a href="https://www.logmed.org.br/" target="_blank" rel="noreferrer">
             www.logmed.org.br
+          </a>
+        </p>
+        <br />
+        <p>
+          • <strong>Ajude a sua comunidade:</strong> Compartilhar dicas de saúde. Acesse{" "}
+          <a href="https://www.canalsaude.fiocruz.br/pages/14" target="_blank" rel="noreferrer">
+            www.canalsaude.fiocruz.br/pages/14
           </a>
         </p>
       </section>

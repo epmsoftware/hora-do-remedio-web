@@ -27,10 +27,23 @@
   margin-bottom: 10px;
 }
 
-.subtitle {
+.subtitle.typing {
   font-size: 1.2rem;
   font-weight: 300;
   margin-bottom: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 3px solid #fff;
+  width: fit-content;
+  margin: 0 auto 30px;
+  animation: blinkCursor 0.7s steps(1) infinite;
+  min-height: 1.5em; /* mantém o espaço fixo */
+}
+
+@keyframes blinkCursor {
+  50% {
+    border-color: transparent;
+  }
 }
 
 .btn {
