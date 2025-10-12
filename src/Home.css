@@ -208,24 +208,10 @@
   font-weight: bold;
 }
 
-.btn-acessibilidade {
-  background-color: #1976d2;
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 20px;
-  margin-top: 20px;
-  cursor: pointer;
-}
-
-.btn-acessibilidade:hover {
-  background-color: #1565c0;
-}
-
-/* Modo alto contraste */
-.alto-contraste {
-  background-color: black !important;
-  color: yellow !important;
+.footer {
+  margin-top: 40px;
+  color: #ccc;
+  text-align: center;
 }
 
 /* Responsividade */

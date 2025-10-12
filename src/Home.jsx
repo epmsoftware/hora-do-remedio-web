@@ -63,39 +63,39 @@ export default function Home() {
 
   // Carregar pacientes e medicamentos do usuário logado
   useEffect(() => {
-  if (!usuario) return;
+    if (!usuario) return;
 
-  const carregarDados = async () => {
-    try {
-      const userId = usuario?.uid || usuario?.id;
+    const carregarDados = async () => {
+      try {
+        const userId = usuario?.uid || usuario?.id;
 
-      // 1) pega pacientes do usuário (esta rota já existe)
-      const pacientesRes = await axios.get(`http://localhost:3001/api/pacientes/${userId}`);
-      const pacientesData = pacientesRes.data || [];
+        // 1) pega pacientes do usuário (esta rota já existe)
+        const pacientesRes = await axios.get(`http://localhost:3001/api/pacientes/${userId}`);
+        const pacientesData = pacientesRes.data || [];
 
-      // grava os pacientes imediatamente (evita sumir a lista se a busca de medicamentos falhar)
-      setPacientes(pacientesData);
+        // grava os pacientes imediatamente (evita sumir a lista se a busca de medicamentos falhar)
+        setPacientes(pacientesData);
 
-      // 2) para cada paciente, busca medicamentos pela rota existente /api/medicamentos/:pacienteId
-      //    usa Promise.all para executar as requisições em paralelo
-      const reqs = pacientesData.map((p) =>
-        axios
-          .get(`http://localhost:3001/api/medicamentos/${p.id}`)
-          .then((res) => res.data)
-          .catch((err) => {
-            console.warn(`Erro ao carregar medicamentos do paciente ${p.id}:`, err.message || err);
-            return []; // retorna array vazio em caso de erro para não quebrar Promise.all
-          })
-      );
+        // 2) para cada paciente, busca medicamentos pela rota existente /api/medicamentos/:pacienteId
+        //    usa Promise.all para executar as requisições em paralelo
+        const reqs = pacientesData.map((p) =>
+          axios
+            .get(`http://localhost:3001/api/medicamentos/${p.id}`)
+            .then((res) => res.data)
+            .catch((err) => {
+              console.warn(`Erro ao carregar medicamentos do paciente ${p.id}:`, err.message || err);
+              return []; // retorna array vazio em caso de erro para não quebrar Promise.all
+            })
+        );
 
-      const medicamentosPorPaciente = await Promise.all(reqs);
-      // medicamentosPorPaciente é um array de arrays -> achata para um só array
-      const todosMedicamentos = medicamentosPorPaciente.flat();
+        const medicamentosPorPaciente = await Promise.all(reqs);
+        // medicamentosPorPaciente é um array de arrays -> achata para um só array
+        const todosMedicamentos = medicamentosPorPaciente.flat();
 
-      setMedicamentos(todosMedicamentos);
+        setMedicamentos(todosMedicamentos);
 
-      // 3) gera gráfico: labels = nomes dos pacientes, dados = qtd de medicamentos por paciente
-      // 🔹 Gráfico 1: Medicamentos por Paciente
+        // 3) gera gráfico: labels = nomes dos pacientes, dados = qtd de medicamentos por paciente
+        // Gráfico 1: Medicamentos por Paciente
         const labelsPacientes = pacientesData.map((p) => p.nome);
         const dadosPacientes = pacientesData.map(
           (p) =>
@@ -115,7 +115,7 @@ export default function Home() {
           ],
         });
 
-        // 🔹 Gráfico 2: Quantidade de Medicamentos por Nome
+        // Gráfico 2: Quantidade de Medicamentos por Nome
         const contagemPorNome = {};
         todosMedicamentos.forEach((m) => {
           contagemPorNome[m.nome] = (contagemPorNome[m.nome] || 0) + 1;
@@ -139,8 +139,8 @@ export default function Home() {
       }
     };
 
-  carregarDados();
-}, [usuario]);
+    carregarDados();
+  }, [usuario]);
 
   // Acessibilidade (modo alto contraste)
   const toggleAcessibilidade = () => {
@@ -211,16 +211,17 @@ export default function Home() {
               {graficoMedicamentos ? <Bar data={graficoMedicamentos} /> : <p>Carregando...</p>}
             </section>
 
-            {/* Acessibilidade */}
-            <button className="btn-acessibilidade" onClick={toggleAcessibilidade}>
-              ♿ Acessibilidade
-            </button>
+            <footer className="footer">
+              <p>&copy; 2025 Hora do Remédio.</p>
+            </footer>
 
           </>
         ) : (
           <p>Carregando usuário...</p>
         )}
+
       </main>
+
     </div>
   );
 }
