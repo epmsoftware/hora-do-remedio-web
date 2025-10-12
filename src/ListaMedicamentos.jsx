@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import "./Unificado.css";
 
 // Som de alerta (arquivo local ou URL)
@@ -13,7 +14,7 @@ export default function ListaMedicamentos() {
   const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
   const userId = usuario?.uid;
 
-  const chaveMedicamentos = `medicamentos_${userId}_${pacienteId}`;
+  /*const chaveMedicamentos = `medicamentos_${userId}_${pacienteId}`;*/
 
   // Função para tocar som
   const tocarSom = useCallback(() => {
@@ -31,17 +32,22 @@ export default function ListaMedicamentos() {
     }
   }, [tocarSom]);
 
-  const carregarMedicamentos = useCallback(() => {
+  // Carrega medicamentos do backend
+  const carregarMedicamentos = useCallback(async () => {
     if (!userId) {
       alert("Usuário não autenticado.");
       navigate("/login");
       return;
     }
 
-    const dados = localStorage.getItem(chaveMedicamentos);
-    const lista = dados ? JSON.parse(dados) : [];
-    setMedicamentos(lista);
-  }, [userId, chaveMedicamentos, navigate]);
+    try {
+      const res = await axios.get(`http://localhost:3001/api/medicamentos/${pacienteId}`);
+      setMedicamentos(res.data);
+    } catch (error) {
+      console.error("Erro ao carregar medicamentos:", error);
+      setMedicamentos([]);
+    }
+  }, [userId, pacienteId, navigate]);
 
   // 1) Carrega medicamentos ao abrir a tela
   useEffect(() => {
@@ -127,19 +133,38 @@ export default function ListaMedicamentos() {
     };
   }, [medicamentos, enviarNotificacao]);
 
-  const excluirMedicamento = (id) => {
+  // Excluir medicamento
+  const excluirMedicamento = async (id) => {
     if (!window.confirm("Deseja realmente excluir este medicamento?")) return;
-    const listaAtualizada = medicamentos.filter((m) => m.id !== id);
-    localStorage.setItem(chaveMedicamentos, JSON.stringify(listaAtualizada));
-    setMedicamentos(listaAtualizada);
+    try {
+      await axios.delete(`http://localhost:3001/api/medicamentos/${id}`);
+      setMedicamentos(medicamentos.filter((m) => m.id !== id));
+    } catch (error) {
+      console.error("Erro ao excluir medicamento:", error);
+      alert("Não foi possível excluir o medicamento.");
+    }
   };
 
-  const toggleAlerta = (id) => {
-    const listaAtualizada = medicamentos.map((m) =>
-      m.id === id ? { ...m, alertaAtivo: !m.alertaAtivo } : m
-    );
-    localStorage.setItem(chaveMedicamentos, JSON.stringify(listaAtualizada));
-    setMedicamentos(listaAtualizada);
+ // Alternar alerta ativo
+  const toggleAlerta = async (id) => {
+    const medicamento = medicamentos.find((m) => m.id === id);
+    if (!medicamento) return;
+
+    try {
+      await axios.post("http://localhost:3001/api/medicamentos", {
+        ...medicamento,
+        alertaAtivo: medicamento.alertaAtivo ? 0 : 1,
+      });
+
+      setMedicamentos(
+        medicamentos.map((m) =>
+          m.id === id ? { ...m, alertaAtivo: m.alertaAtivo ? 0 : 1 } : m
+        )
+      );
+    } catch (error) {
+      console.error("Erro ao atualizar alerta:", error);
+      alert("Não foi possível atualizar o alerta.");
+    }
   };
 
   // Corrige diferença de 1 dia no fuso horário

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Unificado.css";
 
 export default function ListaPacientes() {
@@ -16,25 +17,29 @@ export default function ListaPacientes() {
       return;
     }
 
-    const chave = `pacientes_${userId}`;
-    const dados = localStorage.getItem(chave);
+    const fetchPacientes = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3001/api/pacientes/${userId}`);
+        setPacientes(res.data);
+      } catch (error) {
+        console.error("Erro ao carregar pacientes:", error);
+        setPacientes([]);
+      }
+    };
 
-    try {
-      setPacientes(dados ? JSON.parse(dados) : []);
-    } catch (e) {
-      console.error("Erro ao carregar pacientes:", e);
-      setPacientes([]);
-    }
+    fetchPacientes();
   }, [userId, navigate]);
 
-  const excluirPaciente = (id) => {
+  const excluirPaciente = async (id) => {
     if (!window.confirm("Deseja excluir este paciente?")) return;
 
-    const chave = `pacientes_${userId}`;
-    const listaAtualizada = pacientes.filter((p) => p.id.toString() !== id.toString());
-
-    localStorage.setItem(chave, JSON.stringify(listaAtualizada));
-    setPacientes(listaAtualizada);
+    try {
+      await axios.delete(`http://localhost:3001/api/pacientes/${id}`);
+      setPacientes(pacientes.filter((p) => p.id !== id));
+    } catch (error) {
+      console.error("Erro ao excluir paciente:", error);
+      alert("Não foi possível excluir o paciente.");
+    }
   };
 
   return (
