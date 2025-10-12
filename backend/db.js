@@ -37,14 +37,6 @@ db.serialize(() => {
     alertaAtivo INTEGER DEFAULT 1,
     FOREIGN KEY(paciente_id) REFERENCES pacientes(id)
   )`);
-
-  db.run(`CREATE TABLE IF NOT EXISTS logs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    usuario_id INTEGER,
-    descricao TEXT,
-    datahora TEXT,
-    FOREIGN KEY(usuario_id) REFERENCES usuarios(id)
-  )`);
 });
 
 module.exports = db;
