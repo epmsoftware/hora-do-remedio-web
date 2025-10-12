@@ -19,7 +19,8 @@ export default function Home() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [pacientes, setPacientes] = useState([]);
   const [medicamentos, setMedicamentos] = useState([]);
-  const [grafico, setGrafico] = useState(null);
+  const [graficoPacientes, setGraficoPacientes] = useState(null);
+  const [graficoMedicamentos, setGraficoMedicamentos] = useState(null);
   const navigate = useNavigate();
 
   // Carregar usuário do Firebase (armazenado localmente)
@@ -62,46 +63,74 @@ export default function Home() {
 
   // Carregar pacientes e medicamentos do usuário logado
   useEffect(() => {
-    if (!usuario) return;
+  if (!usuario) return;
 
-    const carregarDados = async () => {
-      try {
-        const userId = usuario?.uid || usuario?.id;
+  const carregarDados = async () => {
+    try {
+      const userId = usuario?.uid || usuario?.id;
 
-        const pacientesRes = await axios.get(`http://localhost:3001/api/pacientes/${userId}`);
-        const pacientesData = pacientesRes.data || [];
+      // 1) pega pacientes do usuário (esta rota já existe)
+      const pacientesRes = await axios.get(`http://localhost:3001/api/pacientes/${userId}`);
+      const pacientesData = pacientesRes.data || [];
 
-        setPacientes(pacientesData);
+      // grava os pacientes imediatamente (evita sumir a lista se a busca de medicamentos falhar)
+      setPacientes(pacientesData);
 
-        const reqs = pacientesData.map((p) =>
-          axios
-            .get(`http://localhost:3001/api/medicamentos/${p.id}`)
-            .then((res) => res.data)
-            .catch((err) => {
-              console.warn(`Erro ao carregar medicamentos do paciente ${p.id}:`, err.message || err);
-              return [];
-            })
+      // 2) para cada paciente, busca medicamentos pela rota existente /api/medicamentos/:pacienteId
+      //    usa Promise.all para executar as requisições em paralelo
+      const reqs = pacientesData.map((p) =>
+        axios
+          .get(`http://localhost:3001/api/medicamentos/${p.id}`)
+          .then((res) => res.data)
+          .catch((err) => {
+            console.warn(`Erro ao carregar medicamentos do paciente ${p.id}:`, err.message || err);
+            return []; // retorna array vazio em caso de erro para não quebrar Promise.all
+          })
+      );
+
+      const medicamentosPorPaciente = await Promise.all(reqs);
+      // medicamentosPorPaciente é um array de arrays -> achata para um só array
+      const todosMedicamentos = medicamentosPorPaciente.flat();
+
+      setMedicamentos(todosMedicamentos);
+
+      // 3) gera gráfico: labels = nomes dos pacientes, dados = qtd de medicamentos por paciente
+      // 🔹 Gráfico 1: Medicamentos por Paciente
+        const labelsPacientes = pacientesData.map((p) => p.nome);
+        const dadosPacientes = pacientesData.map(
+          (p) =>
+            medicamentosPorPaciente.find(
+              (_, idx) => pacientesData[idx].id === p.id
+            )?.length || 0
         );
 
-        const medicamentosPorPaciente = await Promise.all(reqs);
-        
-        const todosMedicamentos = medicamentosPorPaciente.flat();
-
-        setMedicamentos(todosMedicamentos);
-
-        // Gera gráfico: labels = nomes dos pacientes, dados = qtd de medicamentos por paciente
-        const labels = pacientesData.map((p) => p.nome);
-        const dados = pacientesData.map(
-          (p) => (medicamentosPorPaciente.find((arr, idx) => pacientesData[idx].id === p.id) || []).length
-        );
-
-        setGrafico({
-          labels,
+        setGraficoPacientes({
+          labels: labelsPacientes,
           datasets: [
             {
               label: "Medicamentos por Paciente",
-              data: dados,
+              data: dadosPacientes,
               backgroundColor: "#1976d2",
+            },
+          ],
+        });
+
+        // 🔹 Gráfico 2: Quantidade de Medicamentos por Nome
+        const contagemPorNome = {};
+        todosMedicamentos.forEach((m) => {
+          contagemPorNome[m.nome] = (contagemPorNome[m.nome] || 0) + 1;
+        });
+
+        const labelsNomes = Object.keys(contagemPorNome);
+        const dadosNomes = Object.values(contagemPorNome);
+
+        setGraficoMedicamentos({
+          labels: labelsNomes,
+          datasets: [
+            {
+              label: "Quantidade por Nome de Medicamento",
+              data: dadosNomes,
+              backgroundColor: "#4caf50",
             },
           ],
         });
@@ -110,8 +139,8 @@ export default function Home() {
       }
     };
 
-    carregarDados();
-  }, [usuario]);
+  carregarDados();
+}, [usuario]);
 
   // Acessibilidade (modo alto contraste)
   const toggleAcessibilidade = () => {
@@ -173,14 +202,13 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Gráfico simples */}
+            {/* Gráficos */}
             <section className="grafico-area">
               <h3>Medicamentos por Paciente</h3>
-              {grafico ? (
-                <Bar data={grafico} />
-              ) : (
-                <p>Carregando gráfico...</p>
-              )}
+              {graficoPacientes ? <Bar data={graficoPacientes} /> : <p>Carregando...</p>}
+
+              <h3 style={{ marginTop: "2rem" }}>Quantidade por Nome de Medicamento</h3>
+              {graficoMedicamentos ? <Bar data={graficoMedicamentos} /> : <p>Carregando...</p>}
             </section>
 
             {/* Acessibilidade */}
