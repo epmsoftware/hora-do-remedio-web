@@ -69,18 +69,30 @@ export default function Home() {
         const userId = usuario?.uid || usuario?.id;
 
         const pacientesRes = await axios.get(`http://localhost:3001/api/pacientes/${userId}`);
-        const medicamentosRes = await axios.get(`http://localhost:3001/api/medicamentos/${userId}`);
-
-        const pacientesData = pacientesRes.data;
-        const medicamentosData = medicamentosRes.data;
+        const pacientesData = pacientesRes.data || [];
 
         setPacientes(pacientesData);
-        setMedicamentos(medicamentosData);
+
+        const reqs = pacientesData.map((p) =>
+          axios
+            .get(`http://localhost:3001/api/medicamentos/${p.id}`)
+            .then((res) => res.data)
+            .catch((err) => {
+              console.warn(`Erro ao carregar medicamentos do paciente ${p.id}:`, err.message || err);
+              return [];
+            })
+        );
+
+        const medicamentosPorPaciente = await Promise.all(reqs);
         
-        // Gera um gráfico simples de barras (pacientes x qtd medicamentos)
+        const todosMedicamentos = medicamentosPorPaciente.flat();
+
+        setMedicamentos(todosMedicamentos);
+
+        // Gera gráfico: labels = nomes dos pacientes, dados = qtd de medicamentos por paciente
         const labels = pacientesData.map((p) => p.nome);
         const dados = pacientesData.map(
-          (p) => medicamentosData.filter((m) => m.paciente_id === p.id).length
+          (p) => (medicamentosPorPaciente.find((arr, idx) => pacientesData[idx].id === p.id) || []).length
         );
 
         setGrafico({
