@@ -178,6 +178,7 @@ export default function Home() {
         <ul>
           <li><button onClick={() => irPara("/home")}>Home</button></li>
           <li><button onClick={() => irPara("/pacientes")}>Pacientes</button></li>
+          <li><button onClick={() => irPara("/whatsapp")}>WhatsApp</button></li>
           <li><button onClick={() => irPara("/meioambiente")}>Meio Ambiente</button></li>
           <li><button onClick={() => { setMenuAberto(false); alert("Função de Configurações em breve"); }}>Configurações</button></li>
           <li><button onClick={handleLogout} className="logout-btn">Sair</button></li>

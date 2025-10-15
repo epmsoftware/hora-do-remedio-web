@@ -7,6 +7,7 @@ import CadastroPaciente from "./CadastroPaciente";
 import ListaMedicamentos from "./ListaMedicamentos";
 import CadastroMedicamento from "./CadastroMedicamento";
 import MeioAmbiente from "./MeioAmbiente";
+import Whatsapp from "./Whatsapp";
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
         <Route path="/pacientes/:pacienteId/medicamentos/cadastro/:medicamentoId?" element={<CadastroMedicamento />} />
 
         <Route path="/meioambiente" element={<MeioAmbiente />} />
+
+        <Route path="/whatsapp" element={<Whatsapp />} />
       </Routes>
     </BrowserRouter>
   );

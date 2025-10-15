@@ -30,9 +30,33 @@ export default function CadastroPaciente() {
     }
   }, [userId, navigate]);
 
+  // Função para aplicar máscara (exibição)
+  const formatarTelefone = (valor) => {
+    if (!valor) return "";
+    valor = valor.replace(/\D/g, "");
+    if (valor.length <= 10)
+      return valor.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+    else return valor.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
+  };
+
+  const handleTelefoneChange = (e) => {
+    const valor = e.target.value.replace(/\D/g, "");
+    setTelefone(formatarTelefone(valor));
+  };
+
   const handleSalvar = async () => {
     if (!nome || !idade || !peso || !altura) {
       alert("Preencha os campos obrigatórios!");
+      return;
+    }
+
+    // Converter telefone mascarado para formato internacional (para WhatsApp)
+    const telefoneLimpo = telefone.replace(/\D/g, "");
+    const telefoneWhatsApp =
+      telefoneLimpo.length >= 10 ? `55${telefoneLimpo}` : "";
+
+    if (telefoneWhatsApp && telefoneWhatsApp.length < 12) {
+      alert("Telefone inválido. Exemplo: (11) 99999-8888");
       return;
     }
 
@@ -44,7 +68,7 @@ export default function CadastroPaciente() {
       peso,
       altura,
       email,
-      telefone,
+      telefone: telefoneWhatsApp, // salvo já no formato 5511999998888
       descricao,
     };
 
@@ -72,7 +96,7 @@ export default function CadastroPaciente() {
         <input type="number" className="form-input" placeholder="Peso (kg) *" value={peso} onChange={(e) => setPeso(e.target.value)} />
         <input type="number" className="form-input" placeholder="Altura (m) *" value={altura} onChange={(e) => setAltura(e.target.value)} />
         <input type="email" className="form-input" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input type="text" className="form-input" placeholder="Telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+        <input type="text" className="form-input" placeholder="Telefone (ex: (11) 99999-8888)" value={telefone} onChange={handleTelefoneChange} maxLength={15} />
         <textarea className="form-input form-textarea" placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
         <div className="form-actions">
           <button type="submit" className="form-button save">Salvar</button>
