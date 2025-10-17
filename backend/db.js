@@ -7,8 +7,7 @@ db.serialize(() => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT,
     email TEXT,
-    senha TEXT,
-    foto TEXT
+    senha TEXT
   )`);
 
   db.run(`CREATE TABLE IF NOT EXISTS pacientes (
