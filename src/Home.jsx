@@ -142,11 +142,6 @@ export default function Home() {
     carregarDados();
   }, [usuario]);
 
-  // Acessibilidade (modo alto contraste)
-  const toggleAcessibilidade = () => {
-    document.body.classList.toggle("alto-contraste");
-  };
-
   return (
     <div className="home-container">
       {/* Header */}
@@ -157,7 +152,7 @@ export default function Home() {
 
         <div className="home-header-text">
           <h1>Hora do Remédio</h1>
-          <p>Gerenciamento de Pacientes</p>
+          <p>Gerenciamento de Pacientes e Medicamentos</p>
         </div>
 
         {usuario && (

@@ -11,9 +11,9 @@ export default function TelaInicial() {
 
   // Frases que vão aparecer uma após a outra
   const frases = [
-    "Gestão eficiente.",
-    "Controle inteligente.",
-    "Cuidando do meio ambiente!"
+    "Gestão Eficiente.",
+    "Controle Inteligente.",
+    "Cuidando do Meio Ambiente!"
   ];
 
   useEffect(() => {

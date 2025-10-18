@@ -7,7 +7,6 @@ export default function CadastroMedicamento() {
   const { pacienteId, medicamentoId } = useParams();
   const navigate = useNavigate();
 
-  /*const [medicamentos, setMedicamentos] = useState([]);*/
   const [nome, setNome] = useState("");
   const [validade, setValidade] = useState("");
   const [quantidade, setQuantidade] = useState("");
@@ -15,12 +14,6 @@ export default function CadastroMedicamento() {
   const [dosagem, setDosagem] = useState("");
   const [horarios, setHorarios] = useState("");
   const [descricao, setDescricao] = useState("");
-
- /* const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
-  const userId = usuario?.uid;
-
-  const chaveMedicamentos = `medicamentos_${userId}_${pacienteId}`;
-  */
   
   useEffect(() => {
     if (medicamentoId) {

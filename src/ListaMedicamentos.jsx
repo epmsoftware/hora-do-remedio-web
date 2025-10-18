@@ -14,8 +14,6 @@ export default function ListaMedicamentos() {
   const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
   const userId = usuario?.uid;
 
-  /*const chaveMedicamentos = `medicamentos_${userId}_${pacienteId}`;*/
-
   // Função para tocar som
   const tocarSom = useCallback(() => {
     const audio = new Audio(ALERT_SOUND);

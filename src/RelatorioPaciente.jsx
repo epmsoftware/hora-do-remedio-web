@@ -1,19 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Bar, Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  ArcElement,
-  BarElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
 import "./Unificado.css";
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 export default function RelatorioPaciente() {
   const [pacientes, setPacientes] = useState([]);
@@ -66,37 +54,6 @@ export default function RelatorioPaciente() {
     window.open(`http://localhost:3001/api/relatorio/${pacienteSelecionado.id}/excel`, "_blank");
   };
 
-  // Gráfico — Quantidade de medicamentos por paciente
-  const graficoBarra = {
-    labels: medicamentos.map((m) => m.nome),
-    datasets: [
-      {
-        label: "Quantidade",
-        data: medicamentos.map((m) => m.quantidade || 0),
-        backgroundColor: "#1976d2",
-      },
-    ],
-  };
-
-  // Gráfico — Distribuição de frequências
-  const graficoPizza = {
-    labels: medicamentos.map((m) => m.nome),
-    datasets: [
-      {
-        label: "Frequência (h)",
-        data: medicamentos.map((m) => m.frequencia || 0),
-        backgroundColor: [
-          "#1976d2",
-          "#43a047",
-          "#fbc02d",
-          "#e53935",
-          "#8e24aa",
-          "#039be5",
-        ],
-      },
-    ],
-  };
-
   return (
     <div className="form-container">
       <h2 className="form-title">Relatório de Pacientes e Medicamentos</h2>
@@ -146,21 +103,6 @@ export default function RelatorioPaciente() {
               <p>Nenhum medicamento cadastrado.</p>
             )}
           </div>
-
-          {/* Gráficos */}
-          {/*{medicamentos.length > 0 && (
-            <div className="grafico-container">
-              <div className="grafico-item">
-                <h4>Quantidade por Medicamento</h4>
-                <Bar data={graficoBarra} />
-              </div>
-
-              <div className="grafico-item">
-                <h4>Frequência dos Medicamentos</h4>
-                <Pie data={graficoPizza} />
-              </div>
-            </div>
-          )}*/}
 
           {/* Botões de exportação */}
         <div className="form-actions">

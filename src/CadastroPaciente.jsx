@@ -9,7 +9,6 @@ export default function CadastroPaciente() {
 
   const pacienteEdit = location.state?.paciente || null;
 
-  /*const [pacientes, setPacientes] = useState([]);*/
   const [nome, setNome] = useState(pacienteEdit?.nome || "");
   const [idade, setIdade] = useState(pacienteEdit?.idade || "");
   const [peso, setPeso] = useState(pacienteEdit?.peso || "");
@@ -20,8 +19,6 @@ export default function CadastroPaciente() {
 
   const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
   const userId = usuario?.uid;
-
-  /*const chavePacientes = `pacientes_${userId}`;*/
 
   useEffect(() => {
     if (!userId) {
